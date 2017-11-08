@@ -55,8 +55,11 @@ class Networking {
     
     func getEvents(resource: Resource, completion: @escaping ([Event]) -> Void) {
         let fullPath = baseUrl + resource.path()
-        let url = URL(string: fullPath)!
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: URL(string: "google.com")!)
+        if let url = URL(string: fullPath) {
+            request = URLRequest(url: url)
+        }
+    
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = resource.httpHeader()
         

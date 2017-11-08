@@ -28,19 +28,13 @@ class ViewController: UIViewController {
         network.getEvents(resource: .users(username: nameTextField.text!)) { (res) in
             self.events = res
             
-            var finalDate = ""
-            
+            var eventDate = ""
             for event in self.events {
                 if let typeEvent = event.type {
                     if typeEvent == "PushEvent" {
                         if let date = event.date {
-                            for char in date {
-                                if char == "T" {
-                                    break
-                                } else {
-                                    finalDate += String(describing: char)
-                                }
-                            }
+                            let index = date.index(date.startIndex, offsetBy: 10)
+                            eventDate = date.substring(to: index)
                         }
                         break  // Break out of for loop after finding a push event
                     }
@@ -50,6 +44,11 @@ class ViewController: UIViewController {
             formatter.dateFormat = "yyyy-MM-dd"
             let currentDate = formatter.string(from: date)
             
+            var tomorrowDate: Date {
+                return (Calendar.current as NSCalendar).date(byAdding: .day, value: 1, to: Date(), options: [])!
+            }
+            
+            let tomorrowDateString = formatter.string(from: tomorrowDate)
             
             var alert = UIAlertController(title: "Commit Soon!", message: "You haven't made a commit today! Get on it!", preferredStyle: .actionSheet)
             
@@ -58,7 +57,9 @@ class ViewController: UIViewController {
                 alert.dismiss(animated: true, completion: nil)
             }))
             
-            if currentDate == finalDate {
+            print("current date: \(currentDate)")
+            print("commit date: \(eventDate)")
+            if currentDate == eventDate || tomorrowDateString == eventDate {
                 alert.title = "WOOOOOO"
                 alert.message = "You made a commit today! Good Job!"
             }
